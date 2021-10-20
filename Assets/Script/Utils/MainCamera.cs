@@ -1,46 +1,78 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainCamera : MonoBehaviour
 {
-    //Copied from Vicente Soler https://github.com/ADRC4/Voxel/blob/master/Assets/Scripts/Util/MainCamera.cs
-    Vector3 _target;
+    public Transform cameraPos1;
+    public Transform cameraPos2;
+    public Transform cameraPos3;
 
+    private float _speed = 2f;
+
+    private int _currentCamera;
+    private Transform _cameraTarget;
+
+    public Text sceneText;
+
+
+    // Start is called before the first frame update
     void Start()
     {
-        _target = transform.position + transform.forward * 16;
+        _currentCamera = 1;
+        SetCameraTarget(_currentCamera);
     }
 
+    // Update is called once per frame
     void Update()
     {
-        const float rotateSpeed = 4.0f;
-        const float panSpeed = 0.4f;
 
-        bool pan = Input.GetAxis("Pan") == 1.0f;
-        bool rotate = Input.GetAxis("Rotate") == 1.0f;
+    }
+    private void FixedUpdate()
+    {
+        Vector3 tPos = _cameraTarget.position;
+        Vector3 cPos = Vector3.Lerp(transform.position, tPos, Time.deltaTime * _speed);
 
-        if (pan)
+        transform.position = cPos;
+
+        Vector3 tAng = _cameraTarget.transform.rotation.eulerAngles;
+        Vector3 cAng = new Vector3(
+            Mathf.Lerp(transform.rotation.eulerAngles.x, tAng.x, Time.deltaTime * _speed),
+            Mathf.Lerp(transform.rotation.eulerAngles.y, tAng.y, Time.deltaTime * _speed),
+            Mathf.Lerp(transform.rotation.eulerAngles.z, tAng.z, Time.deltaTime * _speed)
+            );
+
+        transform.eulerAngles = cAng;
+
+        sceneText.text = $"{_currentCamera}";
+    }
+
+    public void SetCameraTarget(int num)
+    {
+        switch (num)
         {
-            float right = -Input.GetAxis("Mouse X") * panSpeed;
-            float up = -Input.GetAxis("Mouse Y") * panSpeed;
-
-            var vector = transform.rotation * new Vector3(right, up, 0);
-            transform.position += vector;
-            _target += vector;
+            case 1:
+                _cameraTarget = cameraPos1.transform;
+                break;
+            case 2:
+                _cameraTarget = cameraPos2.transform;
+                break;
+            case 3:
+                _cameraTarget = cameraPos3.transform;
+                break;
         }
-        else if (rotate)
-        {
-            float yaw = Input.GetAxis("Mouse X") * rotateSpeed;
-            float pitch = -Input.GetAxis("Mouse Y") * rotateSpeed;
+    }
 
-            transform.RotateAround(_target, Vector3.up, yaw);
-            transform.RotateAround(_target, transform.rotation * Vector3.right, pitch);
-        }
+    public void AdvanceCamera()
+    {
+        if (_currentCamera < 3) { _currentCamera++; }
+        else { _currentCamera = 1; }
+        SetCameraTarget(_currentCamera);
+    }
 
-        float zoom = Input.GetAxis("Mouse ScrollWheel");
-        if (zoom != 0)
-        {
-            float distance = (_target - transform.position).magnitude * zoom;
-            transform.Translate(Vector3.forward * distance, Space.Self);
-        }
+    public void BackCamera()
+    {
+        if (_currentCamera < 2) { _currentCamera = 3; }
+        else { _currentCamera--; }
+        SetCameraTarget(_currentCamera);
     }
 }

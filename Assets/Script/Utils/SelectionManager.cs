@@ -4,82 +4,56 @@ using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    [SerializeField] private Material maskMaterial;
-    [SerializeField] private Material defaultMaterial;
+    [SerializeField] private Material _maskMaterial;
+    [SerializeField] private Material _clickMaterial;
+    [SerializeField] private Material _defaultMaterial;
+
+    private Dictionary<string, bool> _elementStates;
 
     private Transform _selection;
+
+    private void Start()
+    {
+        _elementStates = new Dictionary<string, bool>();
+        var elements = GameObject.FindGameObjectsWithTag("element");
+        foreach (var element in elements)
+        {
+            _elementStates.Add(element.name, false);
+        }
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (_selection != null)
+        if (_selection != null && !_elementStates[_selection.name])
         {
             var selectionrenderer = _selection.GetComponent<Renderer>();
-            selectionrenderer.material = defaultMaterial;
+            selectionrenderer.material = _defaultMaterial;
             _selection = null;
         }
 
-        //mesh collider aplicado na unity apenas nos itens selecionáveis
-        //elimino a necessidade do filtro no raycast
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
             var selection = hit.transform;
             var selectionRenderer = selection.GetComponent<Renderer>();
-            if (selectionRenderer != null)
+            if (selection.CompareTag("element"))
             {
-                selectionRenderer.material = maskMaterial;
+                if (!_elementStates[selection.name])
+                {
+                    selectionRenderer.material = _maskMaterial;
+                    _selection = selection;
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    selectionRenderer.material = _clickMaterial;
+                    _elementStates[selection.name] = !_elementStates[selection.name];
+                    if (_elementStates[selection.name]) { _selection = null; }
+                    Debug.Log(selection.name + ", " + _elementStates[selection.name]);
+                }
             }
-
-            _selection = selection;
-
-            //if (Input.GetMouseButtonDown(0))
-            //{
-            //    Debug.Log(hit.transform.name);
-            //    selectionRenderer.material = maskMaterial;
-            //} 
-
         }
-
-
-
-
-
-
-
-
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //RaycastHit hit;
-        //if (Physics.Raycast(ray, out hit))
-        //{
-        //    var click = hit.transform;
-        //    if (Input.GetMouseButtonDown(0))
-        //    {
-        //        Debug.Log(hit.transform.name);
-        //        var clickRenderer = click.GetComponent<Renderer>();
-        //        if (clickRenderer != null)
-        //        {
-        //            clickRenderer.material = maskMaterial;
-        //        }
-        //    }
-        //}
-
-
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //    RaycastHit hit;
-        //    if (Physics.Raycast(ray, out hit))
-        //    {
-        //        var click = hit.transform;
-        //        var clickRenderer = click.GetComponent<Renderer>();
-        //        clickRenderer.material = maskMaterial;
-        //        selected = true;
-        //        Debug.Log(hit.transform.name);
-        //        Debug.Log(selected);
-        //    }
-        //}
-
     }
 }
