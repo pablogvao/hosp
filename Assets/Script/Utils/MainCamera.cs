@@ -3,31 +3,29 @@ using UnityEngine.UI;
 
 public class MainCamera : MonoBehaviour
 {
+    //objetos vazios das posições
     public Transform cameraPos1;
     public Transform cameraPos2;
     public Transform cameraPos3;
 
-    private float _speed = 2f;
+    private float _speed = 1.2f;
 
+    //identificar numero da câmera
+    //objeto que é o objetivo
     private int _currentCamera;
     private Transform _cameraTarget;
 
     public Text sceneText;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         _currentCamera = 1;
         SetCameraTarget(_currentCamera);
     }
 
-    // Update is called once per frame
+    //no update eu só tenho as transformações, quem controla qual é a camera é o SetCameraTarget
+    //Time.deltaTime pra garantir constância independente dos FPS
     void Update()
-    {
-
-    }
-    private void FixedUpdate()
     {
         Vector3 tPos = _cameraTarget.position;
         Vector3 cPos = Vector3.Lerp(transform.position, tPos, Time.deltaTime * _speed);
@@ -46,6 +44,10 @@ public class MainCamera : MonoBehaviour
         sceneText.text = $"{_currentCamera}";
     }
 
+    /// <summary>
+    /// método que iguala o cameraTarget ao objeto da posição desejada (lá na unity)
+    /// </summary>
+    /// <param name="num"></param>
     public void SetCameraTarget(int num)
     {
         switch (num)
@@ -62,6 +64,7 @@ public class MainCamera : MonoBehaviour
         }
     }
 
+    //métodos inseridos no OnClick() dos botões
     public void AdvanceCamera()
     {
         if (_currentCamera < 3) { _currentCamera++; }
