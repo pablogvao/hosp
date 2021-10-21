@@ -58,9 +58,19 @@ public class SelectionManager : MonoBehaviour
                     selectionRenderer.material = _clickMaterial;
                     _elementStates[selection.name] = !_elementStates[selection.name];
                     if (_elementStates[selection.name]) { _selection = null; }
-                    //Debug.Log(selection.name + ", " + _elementStates[selection.name]);
+                    Debug.Log(selection.name + ", " + _elementStates[selection.name]);
                 }
             }
         }
     }
+
+
+    //public void PrintDictionary()
+    //{
+    //    foreach (KeyValuePair<string, bool> pair in _elementStates)
+    //    {
+    //        Debug.Log(_elementStates[name]);
+    //        //Debug.Log("Key = {0}, Value {1}", pair.Key, pair.Value);
+    //    }
+    //}
 }
