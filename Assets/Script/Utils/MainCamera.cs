@@ -17,6 +17,8 @@ public class MainCamera : MonoBehaviour
 
     public Text sceneText;
 
+    private bool _moving = false;
+
     void Start()
     {
         _currentCamera = 1;
@@ -27,21 +29,7 @@ public class MainCamera : MonoBehaviour
     //Time.deltaTime pra garantir constância independente dos FPS
     void Update()
     {
-        Vector3 tPos = _cameraTarget.position;
-        Vector3 cPos = Vector3.Lerp(transform.position, tPos, Time.deltaTime * _speed);
-
-        transform.position = cPos;
-
-        Vector3 tAng = _cameraTarget.transform.rotation.eulerAngles;
-        Vector3 cAng = new Vector3(
-            Mathf.Lerp(transform.rotation.eulerAngles.x, tAng.x, Time.deltaTime * _speed),
-            Mathf.Lerp(transform.rotation.eulerAngles.y, tAng.y, Time.deltaTime * _speed),
-            Mathf.Lerp(transform.rotation.eulerAngles.z, tAng.z, Time.deltaTime * _speed)
-            );
-
-        transform.eulerAngles = cAng;
-
-        sceneText.text = $"{_currentCamera}";
+        if (_moving) MoveCamera();
     }
 
     /// <summary>
@@ -62,6 +50,27 @@ public class MainCamera : MonoBehaviour
                 _cameraTarget = cameraPos3.transform;
                 break;
         }
+        sceneText.text = $"{_currentCamera}";
+        _moving = true;
+    }
+
+    private void MoveCamera()
+    {
+        Vector3 tPos = _cameraTarget.position;
+        Vector3 cPos = Vector3.Lerp(transform.position, tPos, Time.deltaTime * _speed);
+
+        transform.position = cPos;
+
+        Vector3 tAng = _cameraTarget.transform.rotation.eulerAngles;
+        Vector3 cAng = new Vector3(
+            Mathf.Lerp(transform.rotation.eulerAngles.x, tAng.x, Time.deltaTime * _speed),
+            Mathf.Lerp(transform.rotation.eulerAngles.y, tAng.y, Time.deltaTime * _speed),
+            Mathf.Lerp(transform.rotation.eulerAngles.z, tAng.z, Time.deltaTime * _speed)
+            );
+
+        transform.eulerAngles = cAng;
+
+        if (transform.position == tPos && transform.eulerAngles == tAng) _moving = false;
     }
 
     //métodos inseridos no OnClick() dos botões

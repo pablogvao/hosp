@@ -5,40 +5,51 @@ using UnityEngine.UI;
 
 public class ControlPanel : MonoBehaviour
 {
-    public GameObject panel;
-    public GameObject panelBlock;
-    public GameObject slcManager;
-    public InputField inputName;
-    public InputField inputUse;
+    private GameObject _panel;
+    private GameObject _panelBlock;
+    private SelectionManager _slcManager;
+    private InputField _inputName;
+    private InputField _inputUse;
 
-    private string _name;
-    private string _use;
+    private UserInfo _userInfo;
+
+    public void Awake()
+    {
+        _panel = transform.Find("PnInputName&Use").gameObject;
+        _panel.SetActive(false);
+        _panelBlock = transform.Find("PanelBlock").gameObject;
+        _panelBlock.SetActive(false);
+        _slcManager = GameObject.Find("Project Manager").GetComponent<SelectionManager>();
+        _inputName = _panel.transform.Find("InputName").GetComponent<InputField>();
+        _inputUse = _panel.transform.Find("InputUse").GetComponent<InputField>();
+    }
 
     public void OpenPanel()
     {
-        if (panel != null)
+        if (_panel != null)
         {
-            panel.SetActive(true);
-            panelBlock.SetActive(true);
-            slcManager.SetActive(false);
+            _panel.SetActive(true);
+            _panelBlock.SetActive(true);
+            _slcManager.Selecting = false;
         }
     }
 
     public void ClosePanel()
     {
-        if (panel != null)
+        if (_panel != null)
         {
-            panel.SetActive(false);
-            panelBlock.SetActive(false);
-            slcManager.SetActive(true);
+            _panel.SetActive(false);
+            _panelBlock.SetActive(false);
+            _slcManager.Selecting = true;
         }
         CleanInputField();
     }
 
     public void StoreInfo()
     {
-        _name = inputName.text;
-        _use = inputUse.text;
+        _userInfo = new UserInfo(_inputName.text, _inputUse.text, Time.time.ToString(), _slcManager.ElementStates);
+        //_userInfo.SaveToFile();
+        _userInfo.PrintData();
 
         //Debug.Log($"O nome é {_name} e essa pessoa quer {_use}");
         CleanInputField();
@@ -46,7 +57,7 @@ public class ControlPanel : MonoBehaviour
 
     public void CleanInputField()
     {
-        inputName.text = "";
-        inputUse.text = "";
+        _inputName.text = "";
+        _inputUse.text = "";
     }
 }
