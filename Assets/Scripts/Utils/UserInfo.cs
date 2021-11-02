@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
 
 public class UserInfo
 {
@@ -27,17 +28,25 @@ public class UserInfo
         //caminho e nome do arquivo
         string path = Application.dataPath + $"/{_name} file.txt";
 
-        //verificar se o caminho existe
-        if (!File.Exists(path)) { File.WriteAllText(path, "infos: \n\n"); }
-
-        //conteúdo
-        File.AppendAllText(path,
-            $"name: {_name}; \n" +
-            $"suggested use: {_use}; \n" +
-            $"why: {_why}; \n" +
-            $"selected elements: {_selected}; \n\n" +
-
-            $"date: {System.DateTime.Now}; \n" +
-            $"in time: {_time}s;");
+        List<string> selected = new List<string>();
+        foreach (KeyValuePair<string, bool> pair in _selected)
+        {
+            if (pair.Value) selected.Add(pair.Key);
         }
+
+        var selectedString = String.Join(",", selected);
+
+
+        using (StreamWriter sw = new StreamWriter(path))
+        {
+            sw.WriteLine($"infos:");
+            sw.WriteLine($"name: {_name}");
+            sw.WriteLine($"suggested use: {_use}");
+            sw.WriteLine($"why: {_why}");
+            sw.WriteLine($"selected elements: {selectedString}");
+            sw.WriteLine();
+            sw.WriteLine($"date: {System.DateTime.Now}");
+            sw.WriteLine($"in time: {_time}s;");
+        }
+    }
 }
