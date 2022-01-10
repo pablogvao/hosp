@@ -1,0 +1,9 @@
+infos: 
+
+name: kdafmlkdaf; 
+suggested use: acgrcrgcrge; 
+why: aagcgrre; 
+selected elements: System.Collections.Generic.Dictionary`2[System.String,System.Boolean]; 
+
+date: 11/2/2021 9:31:42 AM; 
+in time: 159.0226s;
