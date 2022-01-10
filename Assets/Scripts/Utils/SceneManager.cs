@@ -23,7 +23,7 @@ public class SceneManager : MonoBehaviour
     IEnumerator LoadAsynchronously (int sceneIndex)
     {
         //LoadSceneAsync vai carregar de forma assíncrona a próxima sena, com tudo da atual em uso;
-        //armazeno em uma variável operação pra usar as propriedades;
+        //armazeno em uma variável operação pra usar as propriedades; assasa
         AsyncOperation operation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
 
         //ativando tela quando a função for chamada no OnClick();
